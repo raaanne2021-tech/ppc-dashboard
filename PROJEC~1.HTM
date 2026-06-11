@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPC — Projects</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script>if (sessionStorage.getItem('ppc_auth') !== 'true') window.location.href = 'index.html';</script>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="brand">Platinum Premier</div>
+      <div class="name">Construction</div>
+    </div>
+    <nav>
+      <a href="dashboard.html"><span class="icon">🏠</span> Dashboard</a>
+      <a href="projects.html" class="active"><span class="icon">🏗️</span> Projects</a>
+      <a href="sops.html"><span class="icon">📋</span> SOPs &amp; Playbooks</a>
+      <a href="links.html"><span class="icon">🔗</span> Quick Links</a>
+    </nav>
+    <div class="sidebar-footer"><a href="index.html" onclick="sessionStorage.clear()">Sign out</a></div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <h1>Projects</h1>
+      <div class="meta">
+        <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ New Project</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Filter tabs -->
+      <div style="display:flex;gap:8px;margin-bottom:20px">
+        <button class="btn btn-outline btn-sm filter-btn active" onclick="setFilter('All')">All</button>
+        <button class="btn btn-outline btn-sm filter-btn" onclick="setFilter('Active')">Active</button>
+        <button class="btn btn-outline btn-sm filter-btn" onclick="setFilter('Pending')">Pending</button>
+        <button class="btn btn-outline btn-sm filter-btn" onclick="setFilter('Complete')">Complete</button>
+      </div>
+
+      <div class="card">
+        <div style="overflow-x:auto">
+          <table id="projects-table">
+            <thead>
+              <tr>
+                <th>Project / Client</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Phase</th>
+                <th>Value</th>
+                <th>Next Action</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="projects-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Add / Edit Modal -->
+<div class="modal-overlay" id="project-modal">
+  <div class="modal">
+    <h3 id="modal-title">New Project</h3>
+    <input type="text" id="p-name" placeholder="Client name / Project name">
+    <input type="text" id="p-location" placeholder="Location (e.g. San Francisco, CA)">
+    <select id="p-status">
+      <option value="Active">Active</option>
+      <option value="Pending">Pending</option>
+      <option value="On Hold">On Hold</option>
+      <option value="Complete">Complete</option>
+    </select>
+    <input type="text" id="p-phase" placeholder="Phase (e.g. Design, Construction, Closeout)">
+    <input type="text" id="p-value" placeholder="Contract value (e.g. $85,000)">
+    <input type="text" id="p-next" placeholder="Next action needed">
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveProject()">Save Project</button>
+    </div>
+  </div>
+</div>
+
+<script>
+if (sessionStorage.getItem('ppc_auth') !== 'true') window.location.href = 'index.html';
+
+const STORE = 'ppc_projects';
+let projects = JSON.parse(localStorage.getItem(STORE) || '[]');
+let editIdx = null;
+let currentFilter = 'All';
+
+// Seed sample data on first load
+if (projects.length === 0) {
+  projects = [
+    { name: 'Johnson Kitchen Remodel', location: 'San Francisco, CA', status: 'Active', phase: 'Construction', value: '$62,000', next: 'Order cabinet hardware — Pedro to confirm' },
+    { name: 'Martinez ADU', location: 'Oakland, CA', status: 'Active', phase: 'Design', value: '$140,000', next: 'Send revised plans to client for approval' },
+    { name: 'Chen Bathroom Renovation', location: 'Daly City, CA', status: 'Pending', phase: 'Estimate', value: '$28,000', next: 'Follow up — proposal sent June 3' },
+    { name: 'Williams Deck + Fence', location: 'San Mateo, CA', status: 'Complete', phase: 'Closeout', value: '$19,500', next: 'Send final invoice' },
+  ];
+  save();
+}
+
+function save() { localStorage.setItem(STORE, JSON.stringify(projects)); }
+
+const STATUS_BADGE = {
+  'Active': 'badge-green',
+  'Pending': 'badge-amber',
+  'On Hold': 'badge-gray',
+  'Complete': 'badge-blue',
+};
+
+function render() {
+  const filtered = currentFilter === 'All' ? projects : projects.filter(p => p.status === currentFilter);
+  const tbody = document.getElementById('projects-body');
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#aaa;padding:32px">No projects found.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = filtered.map((p, i) => {
+    const realIdx = projects.indexOf(p);
+    return `<tr>
+      <td><strong>${escHtml(p.name)}</strong></td>
+      <td style="color:#888">${escHtml(p.location)}</td>
+      <td><span class="badge ${STATUS_BADGE[p.status] || 'badge-gray'}">${p.status}</span></td>
+      <td>${escHtml(p.phase)}</td>
+      <td style="font-weight:600">${escHtml(p.value)}</td>
+      <td style="color:#555;max-width:220px">${escHtml(p.next)}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-outline btn-sm" onclick="editProject(${realIdx})" style="margin-right:4px">Edit</button>
+        <button class="btn btn-outline btn-sm" style="color:#dc2626" onclick="deleteProject(${realIdx})">Delete</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active', 'btn-primary'));
+  event.target.classList.add('active');
+  render();
+}
+
+function openAddModal() {
+  editIdx = null;
+  document.getElementById('modal-title').textContent = 'New Project';
+  ['p-name','p-location','p-phase','p-value','p-next'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('p-status').value = 'Active';
+  document.getElementById('project-modal').classList.add('open');
+  setTimeout(() => document.getElementById('p-name').focus(), 100);
+}
+
+function editProject(i) {
+  editIdx = i;
+  const p = projects[i];
+  document.getElementById('modal-title').textContent = 'Edit Project';
+  document.getElementById('p-name').value = p.name;
+  document.getElementById('p-location').value = p.location;
+  document.getElementById('p-status').value = p.status;
+  document.getElementById('p-phase').value = p.phase;
+  document.getElementById('p-value').value = p.value;
+  document.getElementById('p-next').value = p.next;
+  document.getElementById('project-modal').classList.add('open');
+}
+
+function saveProject() {
+  const p = {
+    name: document.getElementById('p-name').value.trim() || 'Untitled Project',
+    location: document.getElementById('p-location').value.trim(),
+    status: document.getElementById('p-status').value,
+    phase: document.getElementById('p-phase').value.trim(),
+    value: document.getElementById('p-value').value.trim(),
+    next: document.getElementById('p-next').value.trim(),
+  };
+  if (editIdx !== null) projects[editIdx] = p;
+  else projects.unshift(p);
+  save(); render(); closeModal();
+}
+
+function deleteProject(i) {
+  if (confirm('Delete this project?')) { projects.splice(i, 1); save(); render(); }
+}
+
+function closeModal() { document.getElementById('project-modal').classList.remove('open'); }
+
+document.getElementById('project-modal').addEventListener('click', e => { if (e.target === document.getElementById('project-modal')) closeModal(); });
+
+function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+render();
+</script>
+</body>
+</html>

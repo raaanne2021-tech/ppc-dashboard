@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPC — Login</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="login-wrap">
+  <div class="login-box">
+    <div class="logo-area">
+      <div class="brand">Platinum Premier Construction</div>
+      <h1>Team Workspace</h1>
+      <p>Internal tools &amp; operations hub</p>
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter workspace password" autocomplete="current-password" onkeydown="if(event.key==='Enter') login()">
+    </div>
+    <button class="login-btn" onclick="login()">Sign In →</button>
+    <div class="login-error" id="err">Incorrect password. Try again.</div>
+  </div>
+</div>
+<script>
+// ── Change this to your preferred password ──
+const PASS = 'PPC2026';
+
+function login() {
+  const val = document.getElementById('password').value;
+  if (val === PASS) {
+    sessionStorage.setItem('ppc_auth', 'true');
+    window.location.href = 'dashboard.html';
+  } else {
+    document.getElementById('err').style.display = 'block';
+    document.getElementById('password').value = '';
+    document.getElementById('password').focus();
+  }
+}
+
+// Already logged in? Skip to dashboard
+if (sessionStorage.getItem('ppc_auth') === 'true') {
+  window.location.href = 'dashboard.html';
+}
+</script>
+</body>
+</html>
