@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPC — SOPs & Playbooks</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script>if (sessionStorage.getItem('ppc_auth') !== 'true') window.location.href = 'index.html';</script>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="brand">Platinum Premier</div>
+      <div class="name">Construction</div>
+    </div>
+    <nav>
+      <a href="dashboard.html"><span class="icon">🏠</span> Dashboard</a>
+      <a href="projects.html"><span class="icon">🏗️</span> Projects</a>
+      <a href="sops.html" class="active"><span class="icon">📋</span> SOPs &amp; Playbooks</a>
+      <a href="links.html"><span class="icon">🔗</span> Quick Links</a>
+    </nav>
+    <div class="sidebar-footer"><a href="index.html" onclick="sessionStorage.clear()">Sign out</a></div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <h1>SOPs &amp; Playbooks</h1>
+      <div class="meta">
+        <span style="color:#888;font-size:0.8rem">All docs live in Notion — click any card to open</span>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Search -->
+      <input type="text" id="sop-search" placeholder="🔍  Search playbooks…" oninput="filterSOPs(this.value)" style="width:100%;max-width:400px;padding:10px 14px;border:1px solid #e6e4df;border-radius:10px;font-size:0.9rem;margin-bottom:24px;outline:none;font-family:inherit">
+
+      <!-- Sales & Leads -->
+      <div class="section-header mb-16"><div class="section-title">📞 Sales &amp; Leads</div></div>
+      <div class="sop-grid mb-24" id="grid-sales">
+        <a href="https://app.notion.com/p/36534595b2aa8060aab2e822a25308b1" target="_blank" class="sop-card" data-cat="sales">
+          <div class="sop-icon">📥</div>
+          <div class="sop-name">Lead Process</div>
+          <div class="sop-desc">How to handle a new lead from first contact to proposal sent. Includes JobTread steps and follow-up rules.</div>
+          <div class="sop-tag"><span class="badge badge-blue">Sales</span></div>
+        </a>
+        <a href="https://app.notion.com/p/37634595b2aa80eb9f1cd5a0d464afbf" target="_blank" class="sop-card" data-cat="sales">
+          <div class="sop-icon">📄</div>
+          <div class="sop-name">How to Prepare a Proposal</div>
+          <div class="sop-desc">Step-by-step process for building and sending a proposal in JobTread.</div>
+          <div class="sop-tag"><span class="badge badge-blue">Sales</span></div>
+        </a>
+      </div>
+
+      <!-- Construction -->
+      <div class="section-header mb-16"><div class="section-title">🔨 Construction</div></div>
+      <div class="sop-grid mb-24" id="grid-construction">
+        <a href="https://app.notion.com/p/36534595b2aa808e93c8c42649e3d744" target="_blank" class="sop-card" data-cat="construction">
+          <div class="sop-icon">🔍</div>
+          <div class="sop-name">Pre-Construction Process</div>
+          <div class="sop-desc">Everything from signed contract to breaking ground — permits, design sign-off, material orders.</div>
+          <div class="sop-tag"><span class="badge badge-amber">Construction</span></div>
+        </a>
+        <a href="https://app.notion.com/p/37934595b2aa814392bfd5eb99cbe054" target="_blank" class="sop-card" data-cat="construction">
+          <div class="sop-icon">🏗️</div>
+          <div class="sop-name">Construction Phase</div>
+          <div class="sop-desc">Deposit to project close — progress updates, phase invoicing, client communication, and closeout.</div>
+          <div class="sop-tag"><span class="badge badge-amber">Construction</span></div>
+        </a>
+      </div>
+
+      <!-- Finance & Admin -->
+      <div class="section-header mb-16"><div class="section-title">💰 Finance &amp; Admin</div></div>
+      <div class="sop-grid mb-24" id="grid-finance">
+        <a href="https://app.notion.com/p/37a34595b2aa814dbdaff1e318e43129" target="_blank" class="sop-card" data-cat="finance">
+          <div class="sop-icon">🤝</div>
+          <div class="sop-name">Handoff Playbook</div>
+          <div class="sop-desc">Full role guide — accounts, routines, tools, Pedro's working style, Day 1 / Week 1 / Month 1 checklists.</div>
+          <div class="sop-tag"><span class="badge badge-gray">Admin</span></div>
+        </a>
+        <a href="https://app.notion.com/p/37a34595b2aa8197a9e9f1b1600a77a6" target="_blank" class="sop-card" data-cat="finance">
+          <div class="sop-icon">👷</div>
+          <div class="sop-name">Subcontractor Management</div>
+          <div class="sop-desc">New sub onboarding (W-9, COI, CSLB check), COI expiration tracking, invoice verification, 1099 prep.</div>
+          <div class="sop-tag"><span class="badge badge-gray">Admin</span></div>
+        </a>
+      </div>
+
+      <!-- Client Experience -->
+      <div class="section-header mb-16"><div class="section-title">⭐ Client Experience</div></div>
+      <div class="sop-grid mb-24" id="grid-client">
+        <a href="https://app.notion.com/p/37934595b2aa816aa7c1d55d6592aff8" target="_blank" class="sop-card" data-cat="client">
+          <div class="sop-icon">📱</div>
+          <div class="sop-name">Social Media &amp; Content</div>
+          <div class="sop-desc">Instagram, Facebook, LinkedIn, Newsletter — content calendar, captions, posting schedule.</div>
+          <div class="sop-tag"><span class="badge badge-green">Marketing</span></div>
+        </a>
+        <a href="#" target="_blank" class="sop-card" data-cat="client">
+          <div class="sop-icon">💬</div>
+          <div class="sop-name">Client Experience Playbook</div>
+          <div class="sop-desc">7 stages from first contact to 45-day post-project check-in. Weekly update system and complaint handling.</div>
+          <div class="sop-tag"><span class="badge badge-green">Client</span></div>
+        </a>
+      </div>
+
+      <!-- AI & Systems -->
+      <div class="section-header mb-16"><div class="section-title">🤖 AI &amp; Systems</div></div>
+      <div class="sop-grid mb-24" id="grid-ai">
+        <a href="https://app.notion.com/p/37934595b2aa8118849dd5d1a291f7be" target="_blank" class="sop-card" data-cat="ai">
+          <div class="sop-icon">🤖</div>
+          <div class="sop-name">AI Operations Playbook</div>
+          <div class="sop-desc">Claude + JobTread + Notion — how AI works for PPC, prompts, automations, and daily use guide.</div>
+          <div class="sop-tag"><span class="badge badge-blue">Systems</span></div>
+        </a>
+        <a href="https://app.notion.com/p/37934595b2aa818abbead020c7a836af" target="_blank" class="sop-card" data-cat="ai">
+          <div class="sop-icon">🌐</div>
+          <div class="sop-name">Website &amp; SEO Playbook</div>
+          <div class="sop-desc">Google Business Profile, review strategy, on-page SEO, content calendar, 2-hour monthly routine.</div>
+          <div class="sop-tag"><span class="badge badge-blue">Systems</span></div>
+        </a>
+      </div>
+
+      <!-- Playbook Hub link -->
+      <div style="text-align:center;margin-top:8px">
+        <a href="https://app.notion.com/p/37934595b2aa81d7984ac8a869fdee93" target="_blank" class="btn btn-outline">
+          📚 Open Full Playbook Hub in Notion →
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function filterSOPs(q) {
+  const val = q.toLowerCase();
+  document.querySelectorAll('.sop-card').forEach(card => {
+    const text = card.textContent.toLowerCase();
+    card.style.display = (!val || text.includes(val)) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
